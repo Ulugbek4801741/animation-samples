@@ -1,39 +1,5 @@
+import android.app.Activity import android.content.Context import android.os.Bundle import android.speech.tts.TextToSpeech import android.util.Log import android.widget.Button import android.widget.EditText import android.widget.TextView import androidx.biometric.BiometricPrompt import androidx.core.content.ContextCompat import java.util.concurrent.Executor import kotlin.concurrent.thread class SelfLearningApp : Activity(), TextToSpeech.OnInitListener { private lateinit var tts: TextToSpeech private lateinit var inputEditText: EditText private lateinit var sendButton: Button private lateinit var responseTextView: TextView private lateinit var biometricPrompt: BiometricPrompt private lateinit var promptInfo: BiometricPrompt.PromptInfo override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState) setContentView(R.layout.activity_main) // Tegishli layoutni o'rnating // TextToSpeech ni boshlang tts = TextToSpeech(this, this) inputEditText = findViewById(R.id.inputEditText) sendButton = findViewById(R.id.sendButton) responseTextView = findViewById(R.id.responseTextView) // Biometrik autentifikatsiyani sozlash val executor: Executor = ContextCompat.getMainExecutor(this) biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() { override fun onAuthenticationError(errorCode: Int, errString: CharSequence) { super.onAuthenticationError(errorCode, errString) Log.e("BiometricAuth", "Autentifikatsiya xatosi: $errString") responseTextView.text = "Autentifikatsiya xatosi: $errString" } override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) { super.onAuthenticationSucceeded(result) Log.d("BiometricAuth", "Autentifikatsiya muvaffaqiyatli o'tdi") responseTextView.text = "Autentifikatsiya muvaffaqiyatli o'tdi" handleInput(inputEditText.text.toString()) } override fun onAuthenticationFailed() { super.onAuthenticationFailed() Log.e("BiometricAuth", "Autentifikatsiya muvaffaqiyatsiz") responseTextView.text = "Autentifikatsiya muvaffaqiyatsiz" } }) promptInfo = BiometricPrompt.PromptInfo.Builder() .setTitle("Biometrik autentifikatsiya") .setSubtitle("Davom etish uchun autentifikatsiya qiling") .setNegativeButtonText("Bekor qilish") .build() sendButton.setOnClickListener { biometricPrompt.authenticate(promptInfo) } } override fun onInit(status: Int) { if (status == TextToSpeech.SUCCESS) { tts.language = Locale("uz") // Kerakli tilni o'rnating } else { Log.e("TTS", "Boshlash xatosi") } } private fun handleInput(input: String) { when (input) { "4801741" -> { responseTextView.text = "Maxfiy rejim: Asosiy chat funksiyalari" speakOut("Maxfiy rejim: Asosiy chat funksiyalari") // Asosiy chat funksiyalarini amalga oshiring } "4801741a" -> { responseTextView.text = "Maxfiy rejim: Kengaytirilgan xususiyatlar" speakOut("Maxfiy rejim: Kengaytirilgan xususiyatlar") activateAdvancedFeatures() } else -> { responseTextView.text = "Buyruq qabul qilindi: $input" speakOut("Buyruq qabul qilindi: $input") processCommand(input) } } } private fun activateAdvancedFeatures() {
 
-Android ActivitySceneTransitionBasic Sample
-===================================
+thread { monitorSystems() } thread { manageCriticalOperations() } thread { learnAutomatically() } } private fun monitorSystems() { Log.d("AdvancedFeatures", "Tizimlarni kuzatish") speakOut("Tizimlarni kuzatish") // Tizimlarni kuzatish logikasini amalga oshiring } private fun manageCriticalOperations() { Log.d("AdvancedFeatures", "Muhim operatsiyalarni boshqarish") speakOut("Muhim operatsiyalarni boshqarish") // Muhim operatsiyalarni boshqarish logikasini amalga oshiring } private fun learnAutomatically() { thread { while (true) { Log.d("Learning", "Foydalanuvchi ma'lumotlaridan o'rganish") updateModel() Thread.sleep(1000) // Har bir sekundda } } } private fun updateModel() { Log.d("ModelUpdate", "Yangi model parametrlarini olish va qo'llash") applyNewModelParameters(fetchNewModelParametersFromServer()) } private fun fetchNewModelParametersFromServer(): ModelParameters { Log.d("ModelFetch", "Serverdan yangi model parametrlarini olish") return ModelParameters() // Misol parametrlarni qaytaring }
 
-This sample shows how to use scene transitions from one Activity to another in Lollipop.
-Uses a combination of changeImageTransform and changeBounds to transition a grid of images
-to an Activity with a large image and detail text.
-
-Introduction
-------------
-
-Android Lollipop has introduced the ability to transition between activities by using a shared element.
-This sample demonstrates how to do this using the theme of your application.
-
-See [Defining Custom Animations][1] for all the details on how to do this.
-
-[1]: https://developer.android.com/training/material/animations.html#Transitions
-
-Screenshots
--------------
-
-<img src="screenshots/1-main.png" height="400" alt="Screenshot"/> <img src="screenshots/2-transition.png" height="400" alt="Screenshot"/> <img src="screenshots/3-transition.png" height="400" alt="Screenshot"/> <img src="screenshots/4-detail.png" height="400" alt="Screenshot"/> 
-
-Getting Started
----------------
-
-This sample uses the Gradle build system. To build this project, use the
-"gradlew build" command or use "Import Project" in Android Studio.
-
-Support
--------
-
-- Stack Overflow: http://stackoverflow.com/questions/tagged/android
-
-If you've found an error in this sample, please file an issue:
-https://github.com/android/animation
-
-Patches are encouraged, and may be submitted by forking this project and
-submitting a pull request through GitHub. Please see CONTRIBUTING.md for more details.
+private fun applyNewModelParameters(parameters: ModelParameters) { Log.d("ModelApply", "Yangi model parametrlarini qo'llash") // Yangi parametrlar bilan mahalliy modelni yangilang } private fun speakOut(text: String) { tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null) } private fun processCommand(command: String) { Log.d("Command", "Buyruq qabul qilindi: $command") speakOut("Buyruq qabul qilindi: $command") if (command == "fayl_ochir") { deleteFile("/path/to/file") } } private fun deleteFile(filePath: String) { val file = File(filePath) if (file.exists()) { file.delete() Log.d("FileDelete", "Fayl o'chirildi: $filePath") speakOut("Fayl o'chirildi") } else { Log.d("FileDelete", "Fayl topilmadi: $filePath") speakOut("Fayl topilmadi") } } } class ModelParameters { // Model parametrlarini bu yerda aniqlang }
